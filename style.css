@@ -294,3 +294,60 @@ footer {
     padding: 1.5rem;
   }
 }
+/* Base nav styles */
+.nav-links {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: white;
+  font-weight: 500;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .nav-links {
+    display: none; /* hide menu initially */
+    flex-direction: column;
+    background: black;
+    position: absolute;
+    top: 60px; /* height of your header */
+    right: 0;
+    width: 200px;
+    padding: 20px;
+  }
+
+  .nav-links.active {
+    display: flex; /* show when toggled */
+  }
+
+  .menu-toggle {
+    display: block;
+    cursor: pointer;
+    color: white;
+    font-size: 1.5rem;
+  }
+}
+
+/* Desktop */
+.menu-toggle {
+  display: none;
+}
+.start-btn {
+  display: inline-block;
+  background: #e63946;   /* red button */
+  color: white;
+  padding: 12px 28px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background 0.3s ease;
+}
+
+.start-btn:hover {
+  background: #c92c3c;   /* darker red on hover */
+}

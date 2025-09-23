@@ -13,6 +13,10 @@
   <div class="logo">
     <img src="images/442logo.png" alt="442 Logo">
   </div>
+  
+  <!-- Hamburger menu icon -->
+  <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+
   <nav>
     <ul class="nav-links">
       <li><a href="index.html" class="active">Home</a></li>
@@ -24,10 +28,16 @@
   </nav>
 </header>
 
+<script>
+  function toggleMenu() {
+    document.querySelector(".nav-links").classList.toggle("active");
+  }
+</script>
+
   <section class="hero">
     <h1>You Got Played by Dad!!</h1>
     <p>Fatherly wisdom, life skills, and laughs — learn how to be a dad.</p>
-    <button class="cta-btn">Start Learning</button>
+    <a href="wisdom.html" class="start-btn">Start Learning</a>
   </section>
 
   <main class="content">
