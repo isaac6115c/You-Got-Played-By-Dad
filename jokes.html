@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dad Jokes | You Got Played by Dad</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="logo">
+      <img src="images/442logo.png" alt="442 Logo">
+    </div>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="jokes.html" class="active">Dad Jokes</a></li>
+        <li><a href="wisdom.html">Wisdom</a></li>
+        <li><a href="fixes.html">Fix-It Guides</a></li>
+        <li><a href="community.html">Community</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="page-hero">
+    <h1>🤣 Dad Jokes</h1>
+    <p>you got played by dad SUCKAAHHH!</p>
+  </section>
+
+  <main>
+    <!-- Add Joke Button -->
+    <button id="openModal" class="cta-btn">+ Add Joke</button>
+
+    <!-- Jokes List -->
+    <section id="jokeList" class="stacked-cards">
+      <div class="card">
+        <blockquote>
+          "Why don’t skeletons fight each other? They don’t have the guts."
+        </blockquote>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal -->
+  <div id="jokeModal" class="modal">
+    <div class="modal-content">
+      <span id="closeModal" class="close">&times;</span>
+      <h2>Add a New Joke</h2>
+      <form id="jokeForm">
+        <textarea id="jokeInput" placeholder="Type your best dad joke here..." required></textarea>
+        <button type="submit" class="btn">Submit Joke</button>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 You Got Played by Dad — Inspired by the 1968 Olds 442.</p>
+  </footer>
+
+  <script>
+    const form = document.getElementById('jokeForm');
+    const input = document.getElementById('jokeInput');
+    const jokeList = document.getElementById('jokeList');
+
+    const modal = document.getElementById('jokeModal');
+    const openBtn = document.getElementById('openModal');
+    const closeBtn = document.getElementById('closeModal');
+
+    // Load jokes from local storage
+    const jokes = JSON.parse(localStorage.getItem('jokes')) || [];
+
+    function renderJokes() {
+      jokeList.innerHTML = '';
+      jokes.forEach(joke => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `<blockquote>"${joke}"</blockquote>`;
+        jokeList.appendChild(card);
+      });
+    }
+
+    renderJokes();
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const newJoke = input.value.trim();
+      if (newJoke) {
+        jokes.push(newJoke);
+        localStorage.setItem('jokes', JSON.stringify(jokes));
+        renderJokes();
+        input.value = '';
+        modal.style.display = 'none'; // close modal after submit
+      }
+    });
+
+    // Modal controls
+    openBtn.onclick = () => modal.style.display = 'block';
+    closeBtn.onclick = () => modal.style.display = 'none';
+    window.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; }
+  </script>
+</body>
+</html>

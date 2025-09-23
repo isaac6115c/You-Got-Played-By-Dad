@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wisdom | You Got Played by Dad</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="logo">
+      <img src="images/442logo.png" alt="442 Logo">
+    </div>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="jokes.html">Dad Jokes</a></li>
+        <li><a href="wisdom.html" class="active">Wisdom</a></li>
+        <li><a href="fixes.html">Fix-It Guides</a></li>
+        <li><a href="community.html">Community</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="page-hero">
+    <h1>🧠 Fatherly Wisdom</h1>
+    <p>Hear me now, believe me later.</p>
+  </section>
+
+  <main>
+    <!-- Add Wisdom Button -->
+    <button id="openWisdomModal" class="cta-btn">+ Add Wisdom</button>
+
+    <!-- Wisdom Grid -->
+    <section id="wisdomList" class="grid-cards">
+      <div class="card">
+        <h3>Lesson #1:</h3>
+        <p>Show up — sometimes presence is the best gift.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal -->
+  <div id="wisdomModal" class="modal">
+    <div class="modal-content">
+      <span id="closeWisdomModal" class="close">&times;</span>
+      <h2>Add New Wisdom</h2>
+      <form id="wisdomForm">
+        <textarea id="wisdomInput" placeholder="Type your wisdom here..." required></textarea>
+        <button type="submit" class="btn">Submit Wisdom</button>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 You Got Played by Dad — Inspired by the 1968 Olds 442.</p>
+  </footer>
+
+  <script>
+    const wisdomForm = document.getElementById('wisdomForm');
+    const wisdomInput = document.getElementById('wisdomInput');
+    const wisdomList = document.getElementById('wisdomList');
+
+    const wisdomModal = document.getElementById('wisdomModal');
+    const openWisdomBtn = document.getElementById('openWisdomModal');
+    const closeWisdomBtn = document.getElementById('closeWisdomModal');
+
+    // Load wisdoms from local storage
+    const wisdoms = JSON.parse(localStorage.getItem('wisdoms')) || [];
+
+    function renderWisdom() {
+      wisdomList.innerHTML = '';
+      wisdoms.forEach((wisdom, index) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `<h3>Lesson #${index + 1}:</h3><p>${wisdom}</p>`;
+        wisdomList.appendChild(card);
+      });
+    }
+
+    renderWisdom();
+
+    wisdomForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const newWisdom = wisdomInput.value.trim();
+      if (newWisdom) {
+        wisdoms.push(newWisdom);
+        localStorage.setItem('wisdoms', JSON.stringify(wisdoms));
+        renderWisdom();
+        wisdomInput.value = '';
+        wisdomModal.style.display = 'none'; // close modal
+      }
+    });
+
+    // Modal controls
+    openWisdomBtn.onclick = () => wisdomModal.style.display = 'block';
+    closeWisdomBtn.onclick = () => wisdomModal.style.display = 'none';
+    window.onclick = (e) => { if (e.target === wisdomModal) wisdomModal.style.display = 'none'; }
+  </script>
+</body>
+</html>
