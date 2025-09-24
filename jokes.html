@@ -1,112 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dad Jokes | You Got Played by Dad</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<header class="site-header">
-  <div class="logo">
-    <img src="images/442logo.png" alt="442 Logo">
-  </div>
+  <header class="site-header">
+    <div class="logo">
+      <img src="images/442logo.png" alt="442 Logo">
+    </div>
 
-  <!-- Hamburger toggle -->
-  <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+    <!-- Hamburger toggle -->
+    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
 
-  <nav>
-    <ul class="nav-links">
-      <li><a href="index.html" class="active">Home</a></li>
-      <li><a href="jokes.html">Dad Jokes</a></li>
-      <li><a href="wisdom.html">Wisdom</a></li>
-      <li><a href="fixes.html">Fix-It Guides</a></li>
-      <li><a href="community.html">Community</a></li>
-    </ul>
-  </nav>
-</header>
-
-<script>
-  function toggleMenu() {
-    document.querySelector(".nav-links").classList.toggle("active");
-  }
-</script>
-
-  <section class="page-hero">
-    <h1>🤣 Dad Jokes</h1>
-    <p>you got played by dad SUCKAAHHH!</p>
-  </section>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="jokes.html" class="active">Dad Jokes</a></li>
+        <li><a href="wisdom.html">Wisdom</a></li>
+        <li><a href="fixes.html">Fix-It Guides</a></li>
+        <li><a href="community.html">Community</a></li>
+      </ul>
+    </nav>
+  </header>
 
   <main>
-    <!-- Add Joke Button -->
-    <button id="openModal" class="cta-btn">+ Add Joke</button>
+    <section class="page-hero">
+      <h1>Dad Jokes</h1>
+      <p>Got a good one? Add it below!</p>
+      <button class="cta-btn" onclick="openModal()">Add Joke</button>
+    </section>
 
-    <!-- Jokes List -->
-    <section id="jokeList" class="stacked-cards">
-      <div class="card">
-        <blockquote>
-          "Why don’t skeletons fight each other? They don’t have the guts."
-        </blockquote>
-      </div>
+    <section class="content">
+      <!-- Container for jokes -->
+      <div id="jokesContainer" class="stacked-cards"></div>
     </section>
   </main>
+
+  <footer>
+    <p>© 2025 You Got Played by Dad</p>
+  </footer>
 
   <!-- Modal -->
   <div id="jokeModal" class="modal">
     <div class="modal-content">
-      <span id="closeModal" class="close">&times;</span>
-      <h2>Add a New Joke</h2>
-      <form id="jokeForm">
-        <textarea id="jokeInput" placeholder="Type your best dad joke here..." required></textarea>
-        <button type="submit" class="btn">Submit Joke</button>
-      </form>
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2>Submit a Joke</h2>
+      <input type="text" id="nameInput" placeholder="Your name" style="width:100%;padding:0.6rem;margin:0.5rem 0;border-radius:6px;border:1px solid #ccc;" />
+      <textarea id="jokeInput" placeholder="Type your dad joke here..."></textarea>
+      <button class="cta-btn" onclick="submitJoke()">Submit</button>
     </div>
   </div>
 
-  <footer>
-    <p>&copy; 2025 You Got Played by Dad — Inspired by the 1968 Olds 442.</p>
-  </footer>
-
   <script>
-    const form = document.getElementById('jokeForm');
-    const input = document.getElementById('jokeInput');
-    const jokeList = document.getElementById('jokeList');
+    const API_URL = "https://script.google.com/macros/s/AKfycbxT2aDe-PxsxkjAVlv5rkJnb2iEy69UD04VciXW80Sg6CTr9M8vXDJYbKCUhOFSr3cx/exec";
 
-    const modal = document.getElementById('jokeModal');
-    const openBtn = document.getElementById('openModal');
-    const closeBtn = document.getElementById('closeModal');
-
-    // Load jokes from local storage
-    const jokes = JSON.parse(localStorage.getItem('jokes')) || [];
-
-    function renderJokes() {
-      jokeList.innerHTML = '';
-      jokes.forEach(joke => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `<blockquote>"${joke}"</blockquote>`;
-        jokeList.appendChild(card);
-      });
+    // Toggle mobile menu
+    function toggleMenu() {
+      document.querySelector(".nav-links").classList.toggle("active");
     }
 
-    renderJokes();
+    // Open modal
+    function openModal() {
+      document.getElementById("jokeModal").style.display = "block";
+    }
 
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const newJoke = input.value.trim();
-      if (newJoke) {
-        jokes.push(newJoke);
-        localStorage.setItem('jokes', JSON.stringify(jokes));
-        renderJokes();
-        input.value = '';
-        modal.style.display = 'none'; // close modal after submit
+    // Close modal
+    function closeModal() {
+      document.getElementById("jokeModal").style.display = "none";
+    }
+
+    // Submit a joke
+    async function submitJoke() {
+      const name = document.getElementById("nameInput").value.trim();
+      const content = document.getElementById("jokeInput").value.trim();
+      if (!name || !content) return alert("Please enter your name and a joke!");
+
+      await fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify({ type: "Joke", name, content })
+      });
+
+      document.getElementById("nameInput").value = "";
+      document.getElementById("jokeInput").value = "";
+      closeModal();
+      loadJokes();
+    }
+
+    // Load all jokes
+    async function loadJokes() {
+      try {
+        const res = await fetch(API_URL);
+        const posts = await res.json();
+        const jokes = posts.filter(p => p.type === "Joke");
+
+        const container = document.getElementById("jokesContainer");
+        container.innerHTML = jokes.map(j => `
+          <div class="card">
+            <p>${j.content}</p>
+            <small>— ${j.name || "Anonymous"}, ${new Date(j.timestamp).toLocaleString()}</small>
+          </div>
+        `).join("");
+      } catch (err) {
+        console.error("Error loading jokes:", err);
       }
-    });
+    }
 
-    // Modal controls
-    openBtn.onclick = () => modal.style.display = 'block';
-    closeBtn.onclick = () => modal.style.display = 'none';
-    window.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; }
+    // Load jokes on page start
+    window.onload = loadJokes;
   </script>
 </body>
 </html>
