@@ -54,62 +54,78 @@
     </div>
   </div>
 
-  <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxT2aDe-PxsxkjAVlv5rkJnb2iEy69UD04VciXW80Sg6CTr9M8vXDJYbKCUhOFSr3cx/exec";
+<script>
+  const API_URL = "https://script.google.com/macros/s/AKfycbxT2aDe-PxsxkjAVlv5rkJnb2iEy69UD04VciXW80Sg6CTr9M8vXDJYbKCUhOFSr3cx/exec";
 
-    // Toggle mobile menu
-    function toggleMenu() {
-      document.querySelector(".nav-links").classList.toggle("active");
-    }
+  // Toggle mobile menu
+  function toggleMenu() {
+    document.querySelector(".nav-links").classList.toggle("active");
+  }
 
-    // Open modal
-    function openModal() {
-      document.getElementById("jokeModal").style.display = "block";
-    }
+  // Open modal
+  function openModal() {
+    document.getElementById("jokeModal").style.display = "block";
+  }
 
-    // Close modal
-    function closeModal() {
-      document.getElementById("jokeModal").style.display = "none";
-    }
+  // Close modal
+  function closeModal() {
+    document.getElementById("jokeModal").style.display = "none";
+  }
 
-    // Submit a joke
-    async function submitJoke() {
-      const name = document.getElementById("nameInput").value.trim();
-      const content = document.getElementById("jokeInput").value.trim();
-      if (!name || !content) return alert("Please enter your name and a joke!");
+  // Submit a joke (spam-safe, original payload style)
+  async function submitJoke() {
+    const name = document.getElementById("nameInput").value.trim();
+    const content = document.getElementById("jokeInput").value.trim();
+    const btn = document.querySelector("#jokeModal .cta-btn");
 
+    if (!name || !content) return alert("Please enter your name and a joke!");
+
+    // disable button to prevent spam
+    btn.disabled = true;
+    btn.textContent = "Submitting...";
+
+    try {
       await fetch(API_URL, {
         method: "POST",
         body: JSON.stringify({ type: "Joke", name, content })
       });
 
+      // reset and reload
       document.getElementById("nameInput").value = "";
       document.getElementById("jokeInput").value = "";
       closeModal();
-      loadJokes();
+      await loadJokes();
+    } catch (err) {
+      console.error("Error submitting joke:", err);
+      alert("There was a problem submitting your joke. Please try again.");
+    } finally {
+      // re-enable button
+      btn.disabled = false;
+      btn.textContent = "Submit";
     }
+  }
 
-    // Load all jokes
-    async function loadJokes() {
-      try {
-        const res = await fetch(API_URL);
-        const posts = await res.json();
-        const jokes = posts.filter(p => p.type === "Joke");
+  // Load all jokes
+  async function loadJokes() {
+    try {
+      const res = await fetch(API_URL);
+      const posts = await res.json();
+      const jokes = posts.filter(p => p.type === "Joke");
 
-        const container = document.getElementById("jokesContainer");
-        container.innerHTML = jokes.map(j => `
-          <div class="card">
-            <p>${j.content}</p>
-            <small>— ${j.name || "Anonymous"}, ${new Date(j.timestamp).toLocaleString()}</small>
-          </div>
-        `).join("");
-      } catch (err) {
-        console.error("Error loading jokes:", err);
-      }
+      const container = document.getElementById("jokesContainer");
+      container.innerHTML = jokes.map(j => `
+        <div class="card">
+          <p>${j.content}</p>
+          <small>— ${j.name || "Anonymous"}, ${new Date(j.timestamp).toLocaleString()}</small>
+        </div>
+      `).join("");
+    } catch (err) {
+      console.error("Error loading jokes:", err);
     }
+  }
 
-    // Load jokes on page start
-    window.onload = loadJokes;
-  </script>
+  // Load jokes on page start
+  window.onload = loadJokes;
+</script>
 </body>
 </html>
